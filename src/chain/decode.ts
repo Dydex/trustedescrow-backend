@@ -122,6 +122,7 @@ export function decodeEscrow(contractId: string, native: unknown, ledger: number
     proof,
     dispute,
     settlement,
+    unsweptFee: int(e.unswept_fee, 'unswept_fee').toString(),
     ledger,
   };
 }

@@ -36,6 +36,13 @@ export interface EscrowSnapshot {
   proof: { kind: string; uri: string; hash: string; submittedAt: Date } | null;
   dispute: { openedBy: string; openedAt: Date; fromState: string; deadline: Date } | null;
   settlement: { status: 'Open' } | { status: 'Released'; path: string } | { status: 'Refunded'; path: string };
+  /**
+   * i128 base units, decimal string. Zero unless a fee transfer failed on release (no
+   * trustline, or frozen) — the seller is still paid in full either way. Non-zero means
+   * the platform's own fee is recoverable later with the escrow's `sweep_fee`, which is
+   * permissionless, same as the keeper's other timeout/bump calls.
+   */
+  unsweptFee: string;
   /** Ledger the read was simulated against. */
   ledger: number;
 }
