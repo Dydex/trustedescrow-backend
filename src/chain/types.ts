@@ -17,6 +17,13 @@ export interface EscrowSnapshot {
   feeRecipient: string;
   termsHash: string;
   releaseCodeHash: string;
+  /**
+   * The salt the buyer passed to `Factory::create`, hex-encoded. Lets a client (or this
+   * backend) prove the escrow was actually deployed by the configured factory, not just
+   * that it happens to run the same audited WASM with attacker-chosen terms — see
+   * `ChainClient.getFactoryEscrowAddress`.
+   */
+  salt: string;
   state: EscrowState;
   createdAt: Date;
   fundingDeadline: Date;
@@ -36,6 +43,12 @@ export interface EscrowSnapshot {
 /** Live contract reads. Escrow detail always comes from here, never from the cache. */
 export interface ChainReader {
   getEscrow(contractId: string): Promise<EscrowSnapshot>;
+  /**
+   * `Factory::escrow_address(buyer, salt)`: the address the factory would deploy to for
+   * this buyer and salt. An escrow whose own address doesn't match this was not deployed
+   * by the factory, whatever terms it happens to commit (see `EscrowSnapshot.salt`).
+   */
+  getFactoryEscrowAddress(factoryContractId: string, buyer: string, saltHex: string): Promise<string>;
 }
 
 export interface ChainEvent {
