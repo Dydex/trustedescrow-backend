@@ -1,5 +1,7 @@
 # TrustEscrow backend
 
+[![CI](https://github.com/TrustedEscrow/trustedescrow-backend/actions/workflows/ci.yml/badge.svg)](https://github.com/TrustedEscrow/trustedescrow-backend/actions/workflows/ci.yml)
+
 The off-chain half of TrustEscrow: order drafts and negotiation, messaging, deadline notifications, 2FA, the encrypted delivery-code vault, dispute evidence, and the read cache that answers "which escrows involve me".
 
 **Nothing here has authority over funds.** The API process holds no signing key and never submits a transaction. Escrow state is read live from contract storage; the cache only drives list views and notification schedules. If this whole service disappears, every escrow can still be completed or timed out from a CLI.
