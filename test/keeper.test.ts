@@ -25,7 +25,7 @@ describe('dueAction', () => {
     ['Delivered', snap({ state: 'Delivered', receiptDeadline: at(D) }), 'escalate'],
     [
       'Disputed',
-      snap({ state: 'Disputed', dispute: { openedBy: 'Buyer', openedAt: at(D - 10), fromState: 'Funded', deadline: at(D) } }),
+      snap({ state: 'Disputed', dispute: { openedBy: 'Buyer', openedAt: at(D - 10), fromState: 'Funded', deadline: at(D), statementHash: null, rulingHash: null } }),
       'refund_after_arbitration_timeout',
     ],
   ] as const)('%s: nothing before the deadline, the timeout at it', (_state, s, method) => {

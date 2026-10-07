@@ -91,7 +91,14 @@ describe('decodeEscrow', () => {
           ),
           dispute: variant(
             'Opened',
-            struct({ opened_by: variant('ReceiptTimeout'), opened_at: u64(1_788_300_000), from_state: variant('Delivered'), deadline: u64(1_788_904_800) }),
+            struct({
+              opened_by: variant('ReceiptTimeout'),
+              opened_at: u64(1_788_300_000),
+              from_state: variant('Delivered'),
+              deadline: u64(1_788_904_800),
+              statement_hash: bytes(0),
+              ruling_hash: bytes(0),
+            }),
           ),
           settlement: variant('Refunded', variant('ArbitrationTimeout')),
           unswept_fee: nativeToScVal(15_000_000n, { type: 'i128' }),
@@ -100,9 +107,32 @@ describe('decodeEscrow', () => {
       1,
     );
     expect(s.proof).toEqual({ kind: 'Tracking', uri: 'https://track.example/ABC123', hash: '03'.repeat(32), submittedAt: new Date(1_788_100_000_000) });
-    expect(s.dispute).toMatchObject({ openedBy: 'ReceiptTimeout', fromState: 'Delivered' });
+    expect(s.dispute).toMatchObject({ openedBy: 'ReceiptTimeout', fromState: 'Delivered', statementHash: null, rulingHash: null });
     expect(s.settlement).toEqual({ status: 'Refunded', path: 'ArbitrationTimeout' });
     expect(s.unsweptFee).toBe('15000000');
+  });
+
+  it('decodes a committed statement and ruling hash, and treats the zero hash as unset', () => {
+    const s = decodeEscrow(
+      ESCROW,
+      scValToNative(
+        escrowScVal({
+          dispute: variant(
+            'Opened',
+            struct({
+              opened_by: variant('Buyer'),
+              opened_at: u64(1_788_300_000),
+              from_state: variant('Delivered'),
+              deadline: u64(1_788_904_800),
+              statement_hash: bytes(5),
+              ruling_hash: bytes(0),
+            }),
+          ),
+        }),
+      ),
+      1,
+    );
+    expect(s.dispute).toMatchObject({ statementHash: '05'.repeat(32), rulingHash: null });
   });
 
   it('fails loudly on an unexpected shape', () => {
