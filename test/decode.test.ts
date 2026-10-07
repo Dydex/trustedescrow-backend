@@ -43,6 +43,7 @@ function escrowScVal(overrides: Record<string, xdr.ScVal> = {}) {
     proof: variant('Pending'),
     dispute: variant('NotOpened'),
     settlement: variant('Open'),
+    unswept_fee: nativeToScVal(0n, { type: 'i128' }),
     ...overrides,
   });
 }
@@ -65,6 +66,7 @@ describe('decodeEscrow', () => {
       proof: null,
       dispute: null,
       settlement: { status: 'Open' },
+      unsweptFee: '0',
       ledger: 42,
     });
     expect(s.deliveryDeadline).toEqual(new Date(1_788_260_200 * 1000));
@@ -90,6 +92,7 @@ describe('decodeEscrow', () => {
             struct({ opened_by: variant('ReceiptTimeout'), opened_at: u64(1_788_300_000), from_state: variant('Delivered'), deadline: u64(1_788_904_800) }),
           ),
           settlement: variant('Refunded', variant('ArbitrationTimeout')),
+          unswept_fee: nativeToScVal(15_000_000n, { type: 'i128' }),
         }),
       ),
       1,
@@ -97,6 +100,7 @@ describe('decodeEscrow', () => {
     expect(s.proof).toEqual({ kind: 'Tracking', uri: 'https://track.example/ABC123', hash: '03'.repeat(32), submittedAt: new Date(1_788_100_000_000) });
     expect(s.dispute).toMatchObject({ openedBy: 'ReceiptTimeout', fromState: 'Delivered' });
     expect(s.settlement).toEqual({ status: 'Refunded', path: 'ArbitrationTimeout' });
+    expect(s.unsweptFee).toBe('15000000');
   });
 
   it('fails loudly on an unexpected shape', () => {

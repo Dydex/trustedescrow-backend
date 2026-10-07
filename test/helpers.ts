@@ -271,6 +271,7 @@ export function snapshotFor(
     proof: null,
     dispute: null,
     settlement: { status: 'Open' },
+    unsweptFee: '0',
     ledger: 1000,
     ...overrides,
   };
