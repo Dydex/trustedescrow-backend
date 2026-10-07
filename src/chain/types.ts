@@ -27,7 +27,16 @@ export interface EscrowSnapshot {
   deliveryDeadline: Date | null;
   receiptDeadline: Date | null;
   proof: { kind: string; uri: string; hash: string; submittedAt: Date } | null;
-  dispute: { openedBy: string; openedAt: Date; fromState: string; deadline: Date } | null;
+  dispute: {
+    openedBy: string;
+    openedAt: Date;
+    fromState: string;
+    deadline: Date;
+    /** sha256 of the opener's off-chain statement. Null for `ReceiptTimeout`, which has none. */
+    statementHash: string | null;
+    /** sha256 of the arbitrator's written ruling. Null until `resolve` sets it. */
+    rulingHash: string | null;
+  } | null;
   settlement: { status: 'Open' } | { status: 'Released'; path: string } | { status: 'Refunded'; path: string };
   /** Ledger the read was simulated against. */
   ledger: number;

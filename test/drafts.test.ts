@@ -274,7 +274,7 @@ describe('disputes, evidence and arbitration', () => {
       ctx.db,
       snapshotFor(escrowId, t.terms, t.termsHash, ctx.chain.escrows.get(escrowId)!.releaseCodeHash, {
         state: 'Disputed',
-        dispute: { openedBy: 'Buyer', openedAt: now, fromState: 'Delivered', deadline: new Date(now.getTime() + 7 * 86400_000) },
+        dispute: { openedBy: 'Buyer', openedAt: now, fromState: 'Delivered', deadline: new Date(now.getTime() + 7 * 86400_000), statementHash: null, rulingHash: null },
       }),
       { now, arbitratorAddresses: ctx.config.ARBITRATOR_ADDRESSES, created: { buyer: t.buyer.publicKey(), seller: t.seller.publicKey(), ledger: 900, txHash: 'aa' } },
     );

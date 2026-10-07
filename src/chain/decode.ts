@@ -58,6 +58,14 @@ function hex(v: unknown, field: string): string {
   throw new DecodeError(`${field}: expected bytes, got ${describe(v)}`);
 }
 
+const ZERO_HASH = '00'.repeat(32);
+
+/** `statement_hash`/`ruling_hash` are all-zero until the contract actually commits one. */
+function optionalHex(v: unknown, field: string): string | null {
+  const h = hex(v, field);
+  return h === ZERO_HASH ? null : h;
+}
+
 function describe(v: unknown): string {
   if (Array.isArray(v)) return 'array';
   if (Buffer.isBuffer(v)) return 'bytes';
@@ -88,6 +96,8 @@ export function decodeEscrow(contractId: string, native: unknown, ledger: number
       openedAt: date(d.opened_at, 'dispute.opened_at'),
       fromState: tag(d.from_state, 'dispute.from_state'),
       deadline: date(d.deadline, 'dispute.deadline'),
+      statementHash: optionalHex(d.statement_hash, 'dispute.statement_hash'),
+      rulingHash: optionalHex(d.ruling_hash, 'dispute.ruling_hash'),
     };
   }
 
